@@ -26,6 +26,21 @@ class ChatMessageRequest(BaseModel):
         description="使用的 Gemini 模型,留空則使用預設值"
     )
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "message": "請用 Python 寫一個 Hello World 程式",
+                    "model": "gemini-2.0-flash"
+                },
+                {
+                    "message": "什麼是機器學習？",
+                    "model": None
+                }
+            ]
+        }
+    }
+
 
 class ChatMessage(BaseModel):
     """單筆對話記錄"""
@@ -49,6 +64,27 @@ class ChatMessage(BaseModel):
 class ChatHistoryResponse(BaseModel):
     """對話歷史回應 Schema"""
     messages: list[ChatMessage] = Field(default_factory=list, description="對話記錄列表")
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": "你好",
+                            "timestamp": "2024-01-01T12:00:00Z"
+                        },
+                        {
+                            "role": "assistant",
+                            "content": "你好！我是 AI 助手，有什麼我可以幫助你的嗎？",
+                            "timestamp": "2024-01-01T12:00:01Z"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
 
 
 class ClearHistoryResponse(BaseModel):

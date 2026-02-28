@@ -27,7 +27,24 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 @router.get(
     "/models",
     summary="取得可用模型列表",
-    description="取得所有可用的 Gemini 模型清單及預設模型"
+    description="取得所有可用的 Gemini 模型清單及預設模型",
+    tags=["Model"],
+    responses={
+        200: {
+            "description": "成功取得模型列表",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "models": [
+                            {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash", "context_window": 1000000}
+                        ],
+                        "default_model": "gemini-2.0-flash"
+                    }
+                }
+            }
+        },
+        500: {"description": "伺服器內部錯誤"}
+    }
 )
 async def get_available_models():
     """
@@ -89,7 +106,27 @@ async def generate_sse_stream(user_message: str, model: str) -> AsyncGenerator[s
     "/send",
     response_class=StreamingResponse,
     summary="發送訊息",
-    description="發送使用者訊息並取得 AI streaming 回應（Server-Sent Events）"
+    description="發送使用者訊息並取得 AI streaming 回應（Server-Sent Events）",
+    responses={
+        200: {
+            "description": "成功發送訊息，返回 Server-Sent Events 串流",
+            "content": {
+                "text/event-stream": {
+                    "example": "event: start\ndata: {\"role\": \"assistant\", \"model\": \"gemini-2.0-flash\"}\n\nevent: chunk\ndata: {\"content\": \"你好\"}\n\nevent: done\ndata: {\"role\": \"assistant\", \"complete_content\": \"你好...\"}\n\n"
+                }
+            }
+        },
+        400: {
+            "description": "請求錯誤：訊息為空或模型無效",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "訊息內容不能為空白"}
+                }
+            }
+        },
+        422: {"description": "請求驗證失敗（Validation Error）"},
+        500: {"description": "伺服器內部錯誤或 API 呼叫失敗"}
+    }
 )
 async def send_message(request: ChatMessageRequest) -> StreamingResponse:
     """
@@ -136,7 +173,11 @@ async def send_message(request: ChatMessageRequest) -> StreamingResponse:
     "/history",
     response_model=ChatHistoryResponse,
     summary="取得對話歷史",
-    description="取得目前對話歷史（記憶體版本）"
+    description="取得目前對話歷史（記憶體版本）",
+    responses={
+        200: {"description": "成功取得對話歷史"},
+        500: {"description": "伺服器內部錯誤"}
+    }
 )
 async def get_chat_history() -> ChatHistoryResponse:
     """
@@ -153,7 +194,11 @@ async def get_chat_history() -> ChatHistoryResponse:
     "/clear",
     response_model=ClearHistoryResponse,
     summary="清除對話歷史",
-    description="清除目前對話歷史"
+    description="清除目前對話歷史",
+    responses={
+        200: {"description": "成功清除對話歷史"},
+        500: {"description": "伺服器內部錯誤"}
+    }
 )
 async def clear_chat_history() -> ClearHistoryResponse:
     """

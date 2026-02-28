@@ -68,3 +68,7 @@ logs
 .env.*
 !.env.example
 
+# OpenAPI Generated Files
+backend/openapi.yaml
+frontend/types/api.generated.ts
+

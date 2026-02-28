@@ -11,12 +11,56 @@ from app.core.config import settings
 from app.routers import chat
 
 
+# OpenAPI 標籤定義
+tags_metadata = [
+    {
+        "name": "Chat",
+        "description": "AI 對話相關 API",
+        "externalDocs": {
+            "description": "對話 API 說明",
+            "url": "https://github.com/",
+        },
+    },
+    {
+        "name": "Model",
+        "description": "模型選擇相關 API",
+    },
+    {
+        "name": "Health",
+        "description": "服務狀態檢查",
+    },
+    {
+        "name": "Root",
+        "description": "根路由",
+    },
+]
+
 # 建立 FastAPI 應用程式
 app = FastAPI(
     title=settings.APP_NAME,
     description="AI 對話聊天 API，整合 Google Gemini",
     version="1.0.0",
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
+    openapi_tags=tags_metadata,
+    contact={
+        "name": "開發團隊",
+        "url": "https://github.com/",
+        "email": "dev@example.com",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
+    servers=[
+        {
+            "url": "http://localhost:8000",
+            "description": "本地開發環境",
+        },
+        {
+            "url": "https://api.example.com",
+            "description": "生產環境",
+        },
+    ],
 )
 
 
