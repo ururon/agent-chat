@@ -5,7 +5,7 @@ Google Gemini API 整合服務
 """
 import asyncio
 import threading
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 import google.generativeai as genai
 from google.generativeai.types import GenerateContentResponse
 
@@ -16,10 +16,19 @@ from app.schemas.chat import ChatMessage, MessageRole
 class GeminiService:
     """Google Gemini API 服務"""
 
-    def __init__(self):
-        """初始化 Gemini API client"""
+    def __init__(self, model: Optional[str] = None):
+        """
+        初始化 Gemini API client
+
+        Args:
+            model: 可選的模型 ID,留空則使用環境變數預設值
+        """
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel(settings.GEMINI_MODEL)
+
+        # 使用傳入的模型,或環境變數的預設值
+        model_to_use = model or settings.GEMINI_MODEL
+        self.model = genai.GenerativeModel(model_to_use)
+        self.current_model = model_to_use  # 記錄當前使用的模型
 
         # 記憶體對話歷史（全域共享）
         self._conversation_history: list[ChatMessage] = []
@@ -71,13 +80,15 @@ class GeminiService:
 
     async def generate_streaming_response(
         self,
-        user_message: str
+        user_message: str,
+        model: Optional[str] = None
     ) -> AsyncGenerator[str, None]:
         """
         生成 streaming 回應（真正的即時 streaming）
 
         Args:
             user_message: 使用者輸入的訊息
+            model: 可選的 Gemini 模型選擇,留空則使用當前模型
 
         Yields:
             str: 回應內容片段
@@ -85,6 +96,10 @@ class GeminiService:
         Raises:
             Exception: API 呼叫失敗時拋出例外
         """
+        # 如果提供了不同的模型,創建新的模型實例
+        if model and model != self.current_model:
+            self.model = genai.GenerativeModel(model)
+            self.current_model = model
         # 新增使用者訊息到歷史
         self.add_message(MessageRole.USER, user_message)
 

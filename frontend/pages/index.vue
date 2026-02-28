@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useModelSelection } from '~/composables/useModelSelection'
+
 const {
   messages,
   isLoading,
@@ -10,6 +12,8 @@ const {
   clearHistory,
   scrollToBottom
 } = useChat()
+
+const { currentModel } = useModelSelection()
 
 const handleSend = (message: string) => {
   sendMessage(message)
@@ -45,7 +49,12 @@ useHead({
           <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
             AI Nexus
           </h1>
-          <p class="text-xs text-white/60 mt-1">Powered by Gemini Intelligence</p>
+          <p class="text-xs text-white/60 mt-1">
+            Powered by Gemini Intelligence
+            <span v-if="currentModel" class="text-cyan-400/80">
+              · {{ currentModel.name }}
+            </span>
+          </p>
         </div>
         <button
           v-if="messages.length > 0"

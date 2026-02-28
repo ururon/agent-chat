@@ -1,7 +1,11 @@
 import type { ChatMessage, SendMessageRequest } from '~/types/chat'
 import { useAutoScroll } from './useAutoScroll'
+import { useModelSelection } from './useModelSelection'
+import { readonly, ref, watch } from 'vue'
 
 export const useChat = () => {
+  // 模型選擇
+  const { selectedModel } = useModelSelection()
   // 狀態管理
   const messages = ref<ChatMessage[]>([])
   const isLoading = ref(false)
@@ -87,7 +91,10 @@ export const useChat = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: message.trim() } as SendMessageRequest),
+        body: JSON.stringify({
+          message: message.trim(),
+          model: selectedModel.value
+        } as SendMessageRequest),
       })
 
       if (!response.ok) {

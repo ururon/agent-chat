@@ -17,6 +17,17 @@ export interface ChatMessage {
  */
 export interface SendMessageRequest {
   message: string
+  model?: string
+}
+
+/**
+ * Gemini 模型介面
+ */
+export interface Model {
+  id: string
+  name: string
+  category: 'advanced' | 'recommended' | 'stable'
+  description: string
 }
 
 /**

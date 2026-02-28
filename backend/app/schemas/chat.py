@@ -3,6 +3,7 @@ Chat 相關的 Pydantic Schemas
 """
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -14,7 +15,16 @@ class MessageRole(str, Enum):
 
 class ChatMessageRequest(BaseModel):
     """使用者發送訊息的 Request Schema"""
-    message: str = Field(..., min_length=1, max_length=10000, description="使用者輸入的訊息內容")
+    message: str = Field(
+        ...,
+        min_length=1,
+        max_length=10000,
+        description="使用者輸入的訊息內容"
+    )
+    model: Optional[str] = Field(
+        default=None,
+        description="使用的 Gemini 模型,留空則使用預設值"
+    )
 
 
 class ChatMessage(BaseModel):
@@ -55,6 +65,7 @@ class StreamEvent(BaseModel):
 class StreamStartEvent(StreamEvent):
     """串流開始事件"""
     role: MessageRole = Field(default=MessageRole.ASSISTANT, description="回應角色")
+    model: str = Field(..., description="使用的 Gemini 模型")
 
 
 class StreamChunkEvent(StreamEvent):
