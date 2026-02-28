@@ -18,19 +18,6 @@ const formattedTime = computed(() => {
   })
 })
 
-// 根據角色決定樣式
-const messageClass = computed(() => {
-  return props.message.role === 'user'
-    ? 'bg-blue-500 text-white ml-auto'
-    : 'bg-gray-200 text-gray-800 mr-auto'
-})
-
-const containerClass = computed(() => {
-  return props.message.role === 'user'
-    ? 'justify-end'
-    : 'justify-start'
-})
-
 // 為 AI 訊息渲染 Markdown
 const renderedContent = computed(() => {
   if (props.message.role === 'assistant') {
@@ -38,26 +25,66 @@ const renderedContent = computed(() => {
   }
   return props.message.content
 })
+
+const isUser = computed(() => props.message.role === 'user')
 </script>
 
 <template>
-  <div class="flex mb-4" :class="containerClass">
-    <div class="max-w-[70%] rounded-lg px-4 py-2 shadow-md" :class="messageClass">
-      <div class="text-sm opacity-75 mb-1">
-        {{ message.role === 'user' ? '你' : 'AI 助理' }}
+  <div class="flex mb-4 animate-slide-up" :class="isUser ? 'justify-end' : 'justify-start'">
+    <!-- AI Avatar -->
+    <div v-if="!isUser" class="flex-shrink-0 mr-3">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center text-sm font-bold">
+        🤖
       </div>
-      <!-- AI 訊息使用 Markdown 渲染 -->
+    </div>
+
+    <!-- Message Bubble -->
+    <div
+      :class="[
+        'group max-w-xl px-4 py-3 rounded-2xl transition-all duration-300',
+        isUser
+          ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40'
+          : 'glass-effect hover:bg-white/15 hover:border-white/30'
+      ]"
+    >
+      <!-- Role Label (AI only) -->
+      <div v-if="!isUser" class="text-xs font-semibold text-white/70 mb-1">
+        AI Nexus
+      </div>
+
+      <!-- Content -->
       <div
-        v-if="message.role === 'assistant'"
-        class="prose prose-sm max-w-none prose-pre:bg-gray-800 prose-pre:text-gray-100 prose-code:text-pink-600 prose-a:text-blue-600 prose-strong:text-gray-900 prose-headings:text-gray-800"
-        v-html="renderedContent"
-      />
-      <!-- 使用者訊息保持純文本 -->
-      <div v-else class="whitespace-pre-wrap break-words">
+        v-if="isUser"
+        class="text-sm whitespace-pre-wrap break-words"
+      >
         {{ message.content }}
       </div>
-      <div class="text-xs opacity-60 mt-1 text-right">
+
+      <!-- AI Markdown Content -->
+      <div
+        v-else
+        class="prose prose-sm max-w-none dark:prose-invert
+          prose-p:text-white/90 prose-p:text-sm prose-p:my-2
+          prose-headings:text-white prose-headings:font-bold
+          prose-strong:text-cyan-300 prose-em:text-purple-200
+          prose-code:text-cyan-300 prose-code:bg-white/10 prose-code:px-2 prose-code:py-1 prose-code:rounded
+          prose-pre:bg-slate-900/50 prose-pre:border prose-pre:border-white/20 prose-pre:rounded-lg prose-pre:p-4
+          prose-a:text-cyan-300 prose-a:hover:text-cyan-200
+          prose-ul:text-white/80 prose-li:text-white/80
+          prose-blockquote:border-l-cyan-400 prose-blockquote:text-white/70"
+        v-html="renderedContent"
+      />
+
+      <!-- Timestamp -->
+      <div class="text-xs mt-2" :class="isUser ? 'text-white/60' : 'text-white/50'">
         {{ formattedTime }}
+      </div>
+    </div>
+
+    <!-- User Avatar -->
+    <div v-if="isUser" class="flex-shrink-0 ml-3">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center text-sm font-bold">
+        👤
       </div>
     </div>
   </div>

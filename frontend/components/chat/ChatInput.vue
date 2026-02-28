@@ -41,28 +41,96 @@ const handleCompositionStart = () => {
 const handleCompositionEnd = () => {
   isComposing.value = false
 }
+
+const isFocused = ref(false)
 </script>
 
 <template>
-  <div class="border-t bg-white p-4">
-    <div class="flex gap-2">
-      <textarea
-        v-model="inputMessage"
-        :disabled="disabled"
-        placeholder="輸入訊息... (Enter 發送, Shift+Enter 換行)"
-        rows="3"
-        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-        @keydown="handleKeydown"
-        @compositionstart="handleCompositionStart"
-        @compositionend="handleCompositionEnd"
-      />
-      <button
-        :disabled="disabled || !inputMessage.trim()"
-        class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors h-fit self-end"
-        @click="handleSend"
-      >
-        {{ disabled ? '發送中...' : '發送' }}
-      </button>
+  <div class="relative z-10 px-4 py-4 pb-6">
+    <!-- Floating Input Container -->
+    <div
+      :class="[
+        'glass-effect p-4 transition-all duration-300',
+        isFocused && 'border-white/40 bg-white/15'
+      ]"
+    >
+      <div class="flex gap-3 items-end">
+        <!-- Textarea -->
+        <div class="flex-1 relative">
+          <textarea
+            v-model="inputMessage"
+            :disabled="disabled"
+            placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+            rows="3"
+            class="w-full glass-input px-4 py-3 text-sm rounded-xl resize-none transition-all duration-300"
+            @keydown="handleKeydown"
+            @compositionstart="handleCompositionStart"
+            @compositionend="handleCompositionEnd"
+            @focus="isFocused = true"
+            @blur="isFocused = false"
+          />
+        </div>
+
+        <!-- Send Button -->
+        <button
+          :disabled="disabled || !inputMessage.trim()"
+          @click="handleSend"
+          :class="[
+            'group relative flex-shrink-0 w-12 h-12 rounded-full',
+            'transition-all duration-300 font-medium text-sm',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            'overflow-hidden'
+          ]"
+        >
+          <!-- Button Background Gradient -->
+          <div
+            :class="[
+              'absolute inset-0 bg-gradient-to-r from-cyan-400 to-indigo-600',
+              'transition-all duration-300',
+              disabled || !inputMessage.trim() ? 'opacity-50' : 'opacity-100 group-hover:opacity-110 group-active:scale-95'
+            ]"
+          ></div>
+
+          <!-- Button Icon -->
+          <div class="relative flex items-center justify-center h-full text-white text-lg">
+            <transition
+              name="rotate"
+              mode="out-in"
+            >
+              <span v-if="disabled" key="loading" class="animate-typing">⚙️</span>
+              <span v-else key="send">➤</span>
+            </transition>
+          </div>
+        </button>
+      </div>
+
+      <!-- Help Text -->
+      <p class="text-xs text-white/40 mt-2 ml-4">
+        {{ disabled ? '⏳ Processing your message...' : '💡 Tip: Shift+Enter for new line' }}
+      </p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.glass-input {
+  @apply bg-white/5 backdrop-blur-md border border-white/20 text-white placeholder-white/40;
+
+  &:focus {
+    @apply border-cyan-400/50 bg-white/10 outline-none ring-0;
+  }
+
+  &:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
