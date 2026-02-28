@@ -3,6 +3,7 @@ import type { ChatMessage } from '~/types/chat'
 
 interface Props {
   message: ChatMessage
+  isStreaming?: boolean
 }
 
 const props = defineProps<Props>()
@@ -27,6 +28,11 @@ const renderedContent = computed(() => {
 })
 
 const isUser = computed(() => props.message.role === 'user')
+
+// 判斷是否顯示 loading 動畫（AI 訊息 + 正在串流 + 內容為空）
+const showLoadingAnimation = computed(() => {
+  return !isUser.value && props.isStreaming && !props.message.content
+})
 </script>
 
 <template>
@@ -60,9 +66,27 @@ const isUser = computed(() => props.message.role === 'user')
         {{ message.content }}
       </div>
 
+      <!-- AI Loading Animation -->
+      <div
+        v-else-if="showLoadingAnimation"
+        class="flex items-center gap-1.5 h-6 py-1"
+      >
+        <span
+          class="w-2 h-2 bg-white/60 rounded-full animate-bounce-dot"
+        ></span>
+        <span
+          class="w-2 h-2 bg-white/60 rounded-full animate-bounce-dot"
+          style="animation-delay: 0.1s"
+        ></span>
+        <span
+          class="w-2 h-2 bg-white/60 rounded-full animate-bounce-dot"
+          style="animation-delay: 0.2s"
+        ></span>
+      </div>
+
       <!-- AI Markdown Content -->
       <div
-        v-else
+        v-else-if="!isUser"
         class="prose prose-sm max-w-none dark:prose-invert
           prose-p:text-white/90 prose-p:text-sm prose-p:my-2
           prose-headings:text-white prose-headings:font-bold
@@ -75,8 +99,12 @@ const isUser = computed(() => props.message.role === 'user')
         v-html="renderedContent"
       />
 
-      <!-- Timestamp -->
-      <div class="text-xs mt-2" :class="isUser ? 'text-white/60' : 'text-white/50'">
+      <!-- Timestamp (hide during loading) -->
+      <div
+        v-if="!showLoadingAnimation"
+        class="text-xs mt-2"
+        :class="isUser ? 'text-white/60' : 'text-white/50'"
+      >
         {{ formattedTime }}
       </div>
     </div>

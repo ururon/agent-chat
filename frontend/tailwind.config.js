@@ -36,12 +36,17 @@ module.exports = {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.8' },
         },
+        'bounce-dot': {
+          '0%, 60%, 100%': { transform: 'translateY(0)' },
+          '30%': { transform: 'translateY(-8px)' },
+        },
       },
       animation: {
         'typing': 'typing 1.4s infinite',
         'float': 'float 3s ease-in-out infinite',
         'slide-up': 'slide-up 0.5s ease-out',
         'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+        'bounce-dot': 'bounce-dot 0.8s ease-in-out infinite',
       },
     },
   },

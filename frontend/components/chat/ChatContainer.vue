@@ -4,9 +4,23 @@ import type { ChatMessage } from '~/types/chat'
 interface Props {
   messages: readonly ChatMessage[]
   containerRef?: HTMLElement | null
+  isLoading?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+/**
+ * 判斷指定訊息是否為正在串流中的 AI 訊息
+ * 條件：isLoading 為 true 且該訊息是最後一則 AI 訊息且內容為空
+ */
+const isStreamingMessage = (index: number): boolean => {
+  if (!props.isLoading) return false
+
+  const message = props.messages[index]
+  const isLastMessage = index === props.messages.length - 1
+
+  return isLastMessage && message.role === 'assistant' && !message.content
+}
 </script>
 
 <template>
@@ -47,6 +61,7 @@ defineProps<Props>()
           v-for="(message, index) in messages"
           :key="index"
           :message="message"
+          :is-streaming="isStreamingMessage(index)"
         />
       </div>
     </div>

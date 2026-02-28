@@ -36,7 +36,7 @@ useHead({
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
-            ✨ AI Nexus
+            AI Nexus
           </h1>
           <p class="text-xs text-white/60 mt-1">Powered by Gemini Intelligence</p>
         </div>
@@ -47,7 +47,7 @@ useHead({
         >
           <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <span class="relative flex items-center gap-2">
-            🗑️ Clear
+            Clear
           </span>
         </button>
       </div>
@@ -60,7 +60,7 @@ useHead({
         class="relative z-10 mx-4 mb-4 glass-effect px-6 py-4 border-l-4 border-red-500/50"
         role="alert"
       >
-        <p class="text-sm font-semibold text-red-300">⚠️ Error</p>
+        <p class="text-sm font-semibold text-red-300">Error</p>
         <p class="text-sm text-red-200/80 mt-1">{{ error }}</p>
       </div>
     </transition>
@@ -71,7 +71,7 @@ useHead({
         ref="chatContainerRef"
         class="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
       >
-        <ChatContainer :messages="messages" />
+        <ChatContainer :messages="messages" :is-loading="isLoading" />
       </div>
     </div>
 
