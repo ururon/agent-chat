@@ -1,4 +1,5 @@
 import type { ChatMessage, SendMessageRequest } from '~/types/chat'
+import { useAutoScroll } from './useAutoScroll'
 
 export const useChat = () => {
   // 狀態管理
@@ -16,16 +17,9 @@ export const useChat = () => {
   // 當前正在打字的 AI 訊息索引
   const currentTypingIndex = ref<number | null>(null)
 
-  /**
-   * 自動滾動到最新訊息
-   */
-  const autoScroll = () => {
-    nextTick(() => {
-      if (chatContainerRef.value) {
-        chatContainerRef.value.scrollTop = chatContainerRef.value.scrollHeight
-      }
-    })
-  }
+  // 初始化自動滾動
+  const autoScrollHelper = useAutoScroll(chatContainerRef)
+  autoScrollHelper.init()
 
   /**
    * 同步 typedText 到 messages（手動呼叫，確保最終狀態）
@@ -50,7 +44,7 @@ export const useChat = () => {
         ...currentMessage,
         content: newText
       }
-      autoScroll()
+      autoScrollHelper.debouncedAutoScroll()
     }
   })
 
@@ -71,7 +65,7 @@ export const useChat = () => {
       timestamp: new Date()
     }
     messages.value.push(userMessage)
-    autoScroll()
+    autoScrollHelper.smoothScrollToBottom()
 
     // 準備 AI 訊息佔位
     const aiMessage: ChatMessage = {
@@ -169,6 +163,9 @@ export const useChat = () => {
             // 因為 watch 是異步的，可能在 currentTypingIndex 被清空後才執行
             syncTypedTextToMessage()
 
+            // 強制滾到底部確保看到完整內容
+            await autoScrollHelper.smoothScrollToBottom()
+
             isLoading.value = false
             currentTypingIndex.value = null
             // 不使用 break，改用 flag 標記，確保所有事件處理完成
@@ -230,9 +227,12 @@ export const useChat = () => {
     messages: readonly(messages),
     isLoading: readonly(isLoading),
     isTyping: typingEffect.isTyping,
+    isAtBottom: autoScrollHelper.isAtBottom,
     error: readonly(error),
     chatContainerRef,
+    sentinelRef: autoScrollHelper.sentinelRef,
     sendMessage,
     clearHistory,
+    scrollToBottom: autoScrollHelper.smoothScrollToBottom,
   }
 }

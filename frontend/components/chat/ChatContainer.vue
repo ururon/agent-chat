@@ -55,7 +55,7 @@ const isStreamingMessage = (index: number): boolean => {
     </div>
 
     <!-- Messages -->
-    <div v-else class="flex-1 overflow-y-auto p-4 sm:p-6">
+    <div v-else class="flex-1 p-4 sm:p-6">
       <div class="max-w-3xl mx-auto space-y-4">
         <ChatMessage
           v-for="(message, index) in messages"

@@ -4,8 +4,11 @@ const {
   isLoading,
   error,
   chatContainerRef,
+  sentinelRef,
+  isAtBottom,
   sendMessage,
-  clearHistory
+  clearHistory,
+  scrollToBottom
 } = useChat()
 
 const handleSend = (message: string) => {
@@ -16,6 +19,10 @@ const handleClear = async () => {
   if (confirm('確定要清除所有對話記錄嗎？')) {
     await clearHistory()
   }
+}
+
+const handleScrollToBottom = () => {
+  scrollToBottom()
 }
 
 // 設定頁面 meta
@@ -32,7 +39,7 @@ useHead({
     <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float" style="animation-delay: 4s;"></div>
 
     <!-- Header -->
-    <header class="relative z-10 glass-effect mx-4 mt-4 mb-4 px-6 py-4">
+    <header class="relative z-10 flex-shrink-0 glass-effect mx-4 mt-4 mb-4 px-6 py-4">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
@@ -57,7 +64,7 @@ useHead({
     <transition name="slide-down" mode="out-in">
       <div
         v-if="error"
-        class="relative z-10 mx-4 mb-4 glass-effect px-6 py-4 border-l-4 border-red-500/50"
+        class="relative z-10 flex-shrink-0 mx-4 mb-4 glass-effect px-6 py-4 border-l-4 border-red-500/50"
         role="alert"
       >
         <p class="text-sm font-semibold text-red-300">Error</p>
@@ -72,11 +79,28 @@ useHead({
         class="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
       >
         <ChatContainer :messages="messages" :is-loading="isLoading" />
+        <!-- Sentinel 元素用於 IntersectionObserver -->
+        <div ref="sentinelRef" class="h-px"></div>
       </div>
+
+      <!-- 滾到底部按鈕(當不在底部時顯示) -->
+      <transition name="fade">
+        <button
+          v-if="!isAtBottom && messages.length > 0"
+          @click="handleScrollToBottom"
+          class="absolute bottom-24 right-6 z-40 group relative px-4 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 overflow-hidden shadow-lg hover:shadow-xl"
+        >
+          <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-indigo-600 group-hover:opacity-90 transition-opacity"></div>
+          <span class="relative flex items-center gap-2">
+            ↓ Back to Bottom
+          </span>
+        </button>
+      </transition>
     </div>
 
     <!-- Input Area -->
     <ChatInput
+      class="flex-shrink-0"
       :disabled="isLoading"
       @send="handleSend"
     />
@@ -100,5 +124,16 @@ useHead({
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* Fade transition for scroll-to-bottom button */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
