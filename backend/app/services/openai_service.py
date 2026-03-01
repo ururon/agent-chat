@@ -48,6 +48,9 @@ class OpenAIService:
         Raises:
             Exception: API 呼叫或串流處理錯誤（額度錯誤會作為訊息返回）
         """
+        # Debug: 記錄使用的模型
+        print(f"[DEBUG] generate_streaming_response called with model: {model}")
+
         # 添加使用者訊息到歷史
         user_msg = ChatMessage(
             role=MessageRole.USER,

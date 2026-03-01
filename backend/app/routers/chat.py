@@ -162,6 +162,9 @@ async def send_message(request: ChatMessageRequest) -> StreamingResponse:
     Raises:
         HTTPException: 當請求驗證失敗或 API 呼叫錯誤時
     """
+    # Debug: 記錄接收到的請求
+    print(f"[DEBUG] send_message - request.model: {request.model}, request.message: {request.message[:50]}")
+
     # 驗證訊息
     if not request.message.strip():
         raise HTTPException(
@@ -171,6 +174,7 @@ async def send_message(request: ChatMessageRequest) -> StreamingResponse:
 
     # 驗證模型（如果提供的話）
     model_to_use = request.model or settings.GEMINI_MODEL
+    print(f"[DEBUG] model_to_use: {model_to_use} (GEMINI_MODEL from .env: {settings.GEMINI_MODEL})")
     if request.model:
         # 使用動態驗證（來自 Google API 的模型列表）
         if not await model_service.validate_model(request.model):
