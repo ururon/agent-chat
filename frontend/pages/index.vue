@@ -66,14 +66,18 @@ useHead({
             @update:model-value="setSelectedModel"
           />
           <button
-            v-if="messages.length > 0"
             @click="handleClear"
-            class="group relative px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-300 overflow-hidden bg-white/10 hover:bg-white/15 border border-white/20 flex items-center gap-2"
+            :disabled="messages.length === 0"
+            class="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 flex items-center gap-2 bg-white/10 border border-white/20"
+            :class="{
+              'text-white hover:bg-white/15 cursor-pointer': messages.length > 0,
+              'text-white/50 cursor-not-allowed opacity-50': messages.length === 0
+            }"
           >
-            <span class="relative">
+            <span>
               Clear
             </span>
-            <svg class="w-4 h-4 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
