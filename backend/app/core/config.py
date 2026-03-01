@@ -19,6 +19,9 @@ class ModelInfo(TypedDict):
 # Google Vertex AI OpenAI 兼容端點
 OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
+# Google Models API URL（用於動態取得模型列表）
+GOOGLE_MODELS_API_URL = "https://generativelanguage.googleapis.com/v1beta/models"
+
 # 可用的 Google Gemini 模型白名單（通過 OpenAI SDK 訪問）
 AVAILABLE_MODELS: dict[str, ModelInfo] = {
     "gemini-1.5-pro": {

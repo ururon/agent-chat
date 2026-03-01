@@ -20,6 +20,7 @@ from app.schemas.chat import (
     MessageRole
 )
 from app.services.openai_service import openai_service
+from app.services.model_service import model_service
 
 
 router = APIRouter(
@@ -54,15 +55,29 @@ async def get_available_models():
     """
     取得可用的 Gemini 模型列表
 
+    從 Google Generative Language API 動態獲取可用模型列表
+
     Returns:
         dict: 包含模型列表與預設模型的回應
             - models: 模型資訊列表
             - default_model: 預設模型 ID
+
+    Raises:
+        HTTPException: 若 Google API 呼叫失敗，返回 500 錯誤
     """
-    return {
-        "models": list(AVAILABLE_MODELS.values()),
-        "default_model": settings.GEMINI_MODEL
-    }
+    try:
+        # 從 Google API 動態取得模型列表
+        models = await model_service.get_available_models()
+        return {
+            "models": models,
+            "default_model": model_service.get_default_model()
+        }
+    except Exception as e:
+        # 若 API 失敗，返回 500 錯誤
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"無法取得模型列表: {str(e)}"
+        )
 
 
 async def generate_sse_stream(user_message: str, model: str) -> AsyncGenerator[str, None]:
