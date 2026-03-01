@@ -8,32 +8,39 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ModelInfo(TypedDict):
-    """Gemini 模型資訊"""
+    """Google Gemini 模型資訊（通過 OpenAI SDK 訪問）"""
     id: str
     name: str
     category: str  # "advanced", "recommended", "stable"
     description: str
+    context_window: int
 
 
-# 可用的 Gemini 模型白名單
+# Google Vertex AI OpenAI 兼容端點
+OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+# 可用的 Google Gemini 模型白名單（通過 OpenAI SDK 訪問）
 AVAILABLE_MODELS: dict[str, ModelInfo] = {
-    "gemini-3.1-pro": {
-        "id": "gemini-3.1-pro",
-        "name": "Gemini 3.1 Pro",
+    "gemini-1.5-pro": {
+        "id": "gemini-1.5-pro",
+        "name": "Gemini 1.5 Pro",
         "category": "advanced",
-        "description": "最新推出,推理能力最強,支持複雜問題解決"
-    },
-    "gemini-2.5-flash": {
-        "id": "gemini-2.5-flash",
-        "name": "Gemini 2.5 Flash",
-        "category": "recommended",
-        "description": "新一代快速模型,平衡速度與品質,推薦大多數應用"
+        "description": "高級推理能力，適合複雜對話和分析",
+        "context_window": 1000000
     },
     "gemini-2.0-flash": {
         "id": "gemini-2.0-flash",
         "name": "Gemini 2.0 Flash",
+        "category": "recommended",
+        "description": "最新快速模型，平衡速度與質量，推薦大多數應用",
+        "context_window": 1000000
+    },
+    "gemini-1.5-flash": {
+        "id": "gemini-1.5-flash",
+        "name": "Gemini 1.5 Flash",
         "category": "stable",
-        "description": "成熟穩定的快速模型,適合高頻對話應用"
+        "description": "成熟穩定的快速模型，適合高頻對話",
+        "context_window": 1000000
     },
 }
 

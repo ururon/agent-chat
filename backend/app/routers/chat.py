@@ -2,6 +2,7 @@
 Chat 相關 API Endpoints
 
 提供聊天功能的 RESTful API，支援 Server-Sent Events (SSE) streaming
+使用 OpenAI SDK 搭配 Google Vertex AI OpenAI 兼容 API
 """
 import json
 from typing import AsyncGenerator
@@ -18,10 +19,14 @@ from app.schemas.chat import (
     StreamDoneEvent,
     MessageRole
 )
-from app.services.gemini_service import gemini_service, GeminiService
+from app.services.openai_service import openai_service
 
 
-router = APIRouter(prefix="/api/chat", tags=["chat"])
+router = APIRouter(
+    prefix="/api/chat",
+    tags=["chat"],
+    description="AI 對話 API - 使用 Google Gemini（通過 OpenAI SDK）"
+)
 
 
 @router.get(
@@ -67,7 +72,7 @@ async def generate_sse_stream(user_message: str, model: str) -> AsyncGenerator[s
 
     Args:
         user_message: 使用者輸入的訊息
-        model: 使用的 Gemini 模型 ID
+        model: 使用的 Google Gemini 模型 ID（通過 OpenAI API 訪問）
 
     Yields:
         str: SSE 格式的事件資料
@@ -80,8 +85,8 @@ async def generate_sse_stream(user_message: str, model: str) -> AsyncGenerator[s
         # 收集完整回應
         complete_content_parts = []
 
-        # 串流 Gemini 回應（傳遞模型參數）
-        async for chunk in gemini_service.generate_streaming_response(user_message, model=model):
+        # 串流 OpenAI 回應（使用 Google Gemini 模型）
+        async for chunk in openai_service.generate_streaming_response(user_message, model=model):
             complete_content_parts.append(chunk)
 
             # 發送 chunk 事件
@@ -186,7 +191,7 @@ async def get_chat_history() -> ChatHistoryResponse:
     Returns:
         ChatHistoryResponse: 包含對話記錄列表的回應
     """
-    messages = gemini_service.get_history()
+    messages = openai_service.get_history()
     return ChatHistoryResponse(messages=messages)
 
 
@@ -207,7 +212,7 @@ async def clear_chat_history() -> ClearHistoryResponse:
     Returns:
         ClearHistoryResponse: 清除結果回應
     """
-    gemini_service.clear_history()
+    openai_service.clear_history()
     return ClearHistoryResponse(
         success=True,
         message="對話歷史已清除"

@@ -38,7 +38,7 @@ tags_metadata = [
 # 建立 FastAPI 應用程式
 app = FastAPI(
     title=settings.APP_NAME,
-    description="AI 對話聊天 API，整合 Google Gemini",
+    description="AI 對話聊天 API，整合 Google Gemini（通過 OpenAI SDK）",
     version="1.0.0",
     debug=settings.DEBUG,
     openapi_tags=tags_metadata,
