@@ -6,7 +6,7 @@ export const useModelSelection = () => {
 
   // 狀態
   const models = ref<Model[]>([])
-  const selectedModel = ref<string>('gemini-2-0-flash') // 預設值
+  const selectedModel = ref<string>('gemini-2.0-flash') // 預設值（正確格式：使用 . 而不是 -）
   const isLoadingModels = ref(false)
   const modelsError = ref<string | null>(null)
 
@@ -57,8 +57,8 @@ export const useModelSelection = () => {
       console.error('取得模型列表失敗:', err)
       modelsError.value =
         err instanceof Error ? err.message : '無法載入模型列表'
-      // 降級：使用預設值
-      selectedModel.value = 'gemini-2-0-flash'
+      // 降級：使用預設值（正確格式）
+      selectedModel.value = 'gemini-2.0-flash'
     } finally {
       isLoadingModels.value = false
     }
