@@ -11,6 +11,10 @@ from app.core.config import settings, OPENAI_BASE_URL
 from app.schemas.chat import ChatMessage, MessageRole
 
 
+# 預設的額度用完訊息
+QUOTA_EXCEEDED_MESSAGE = "抱歉，AI 服務額度已用完，請稍後再試或聯繫管理員。"
+
+
 class OpenAIService:
     """
     OpenAI 服務類
@@ -42,7 +46,7 @@ class OpenAIService:
             str: 生成的文字片段
 
         Raises:
-            Exception: API 呼叫或串流處理錯誤
+            Exception: API 呼叫或串流處理錯誤（額度錯誤會作為訊息返回）
         """
         # 添加使用者訊息到歷史
         user_msg = ChatMessage(
@@ -89,9 +93,40 @@ class OpenAIService:
             self._message_history.append(assistant_msg)
 
         except Exception as e:
-            # 移除該次使用者訊息（因為失敗了）
-            self._message_history.pop()
-            raise
+            # 檢查是否為額度用完錯誤
+            if self._is_quota_exceeded_error(e):
+                # 額度用完：移除使用者訊息，返回友善訊息
+                self._message_history.pop()
+                yield QUOTA_EXCEEDED_MESSAGE
+            else:
+                # 其他錯誤：移除使用者訊息，重新拋出
+                self._message_history.pop()
+                raise
+
+    @staticmethod
+    def _is_quota_exceeded_error(error: Exception) -> bool:
+        """
+        判斷是否為額度用完錯誤
+
+        Args:
+            error: 捕捉的例外
+
+        Returns:
+            bool: 是否為額度用完錯誤
+        """
+        error_str = str(error).lower()
+        # 檢查常見的額度用完關鍵字
+        quota_keywords = [
+            "quota",
+            "rate limit",
+            "rate_limit",
+            "429",
+            "403",
+            "resource_exhausted",
+            "resourceexhausted",
+            "out of quota"
+        ]
+        return any(keyword in error_str for keyword in quota_keywords)
 
     def get_history(self) -> list[ChatMessage]:
         """
