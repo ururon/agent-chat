@@ -68,12 +68,14 @@ useHead({
           <button
             v-if="messages.length > 0"
             @click="handleClear"
-            class="group relative px-6 py-2 text-sm font-medium text-white transition-all duration-300 overflow-hidden rounded-full"
+            class="group relative px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-300 overflow-hidden bg-white/10 hover:bg-white/15 border border-white/20 flex items-center gap-2"
           >
-            <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <span class="relative flex items-center gap-2">
+            <span class="relative">
               Clear
             </span>
+            <svg class="w-4 h-4 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
       </div>
