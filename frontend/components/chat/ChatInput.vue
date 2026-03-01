@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useModelSelection } from '~/composables/useModelSelection'
-import ModelSelect from './ModelSelect.vue'
 
 interface Props {
   disabled?: boolean
@@ -16,8 +14,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
-
-const { models, selectedModel, setSelectedModel, isLoadingModels } = useModelSelection()
 
 const inputMessage = ref('')
 const isComposing = ref(false)
@@ -53,26 +49,6 @@ const isFocused = ref(false)
 
 <template>
   <div class="relative z-10 px-4 py-4 pb-6">
-    <!-- 模型選擇區塊 -->
-    <div class="mb-4 flex items-center gap-2">
-      <label class="text-xs text-white/70 font-medium whitespace-nowrap">
-        Model:
-      </label>
-      <div class="flex-1">
-        <ModelSelect
-          v-model="selectedModel"
-          :models="models"
-          @update:model-value="setSelectedModel"
-        />
-      </div>
-    </div>
-
-    <!-- 模型說明 -->
-    <div v-if="selectedModel && models.find(m => m.id === selectedModel)"
-         class="mb-4 text-xs text-white/60 px-3 py-2 bg-white/5 rounded-lg border border-white/10">
-      {{ models.find(m => m.id === selectedModel)?.description }}
-    </div>
-
     <!-- Floating Input Container -->
     <div
       :class="[

@@ -1,46 +1,45 @@
 <template>
   <div class="relative">
-    <!-- 選擇按鈕 -->
+    <!-- 選擇按鈕 - Header 版本 (緊湊) -->
     <button
       @click="toggleDropdown"
-      class="w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+      class="px-4 py-2 text-sm font-medium bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg text-white transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-transparent"
     >
-      <span class="text-gray-900">{{ selectedModelName }}</span>
-      <span class="float-right text-gray-500">
-        <svg
-          class="w-5 h-5 transition-transform"
-          :class="{ 'rotate-180': isOpen }"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      </span>
+      <span class="text-white/70">Model:</span>
+      <span>{{ selectedModelName }}</span>
+      <svg
+        class="w-4 h-4 transition-transform flex-shrink-0"
+        :class="{ 'rotate-180': isOpen }"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
     </button>
 
     <!-- 下拉選單 -->
     <div
       v-if="isOpen"
-      class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg"
+      class="absolute top-full right-0 mt-2 min-w-[240px] glass-effect rounded-lg shadow-xl z-50 border border-white/10"
     >
       <!-- 滾軸限制容器：最多 5 筆，超過則顯示滾軸 -->
-      <div class="max-h-[200px] overflow-y-auto">
+      <div class="max-h-[240px] overflow-y-auto">
         <button
           v-for="model in models"
           :key="model.id"
           @click="selectModel(model)"
-          class="w-full px-3 py-2 text-left hover:bg-blue-50 focus:outline-none focus:bg-blue-50 transition-colors"
-          :class="{ 'bg-blue-100 font-semibold': isSelected(model.id) }"
+          class="w-full px-4 py-3 text-left hover:bg-white/10 focus:outline-none focus:bg-white/10 transition-colors border-b border-white/5 last:border-b-0"
+          :class="{ 'bg-white/15 font-semibold': isSelected(model.id) }"
         >
-          <div class="flex justify-between items-center">
-            <div>
-              <div class="text-gray-900">{{ model.name }}</div>
-              <div class="text-xs text-gray-500">{{ model.category }}</div>
+          <div class="flex justify-between items-center gap-3">
+            <div class="flex-1">
+              <div class="text-white font-medium">{{ model.name }}</div>
+              <div class="text-xs text-white/60 mt-1">{{ model.category }}</div>
             </div>
             <svg
               v-if="isSelected(model.id)"
-              class="w-5 h-5 text-blue-600"
+              class="w-5 h-5 text-cyan-400 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -59,7 +58,7 @@
   <!-- 點擊外部關閉下拉選單 -->
   <div
     v-if="isOpen"
-    class="fixed inset-0 z-0"
+    class="fixed inset-0 z-40"
     @click="isOpen = false"
   />
 </template>

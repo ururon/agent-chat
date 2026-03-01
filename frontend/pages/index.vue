@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useModelSelection } from '~/composables/useModelSelection'
+import ModelSelect from '~/components/chat/ModelSelect.vue'
 
 const {
   messages,
@@ -13,7 +14,13 @@ const {
   scrollToBottom
 } = useChat()
 
-const { currentModel } = useModelSelection()
+const {
+  models,
+  selectedModel,
+  setSelectedModel,
+  isLoadingModels,
+  currentModel
+} = useModelSelection()
 
 const handleSend = (message: string) => {
   sendMessage(message)
@@ -51,21 +58,26 @@ useHead({
           </h1>
           <p class="text-xs text-white/60 mt-1">
             Powered by Gemini Intelligence
-            <span v-if="currentModel" class="text-cyan-400/80">
-              · {{ currentModel.name }}
-            </span>
           </p>
         </div>
-        <button
-          v-if="messages.length > 0"
-          @click="handleClear"
-          class="group relative px-6 py-2 text-sm font-medium text-white transition-all duration-300 overflow-hidden rounded-full"
-        >
-          <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <span class="relative flex items-center gap-2">
-            Clear
-          </span>
-        </button>
+        <!-- 右側：模型選擇 + Clear 按鈕 -->
+        <div class="flex items-center gap-3">
+          <ModelSelect
+            v-model="selectedModel"
+            :models="models"
+            @update:model-value="setSelectedModel"
+          />
+          <button
+            v-if="messages.length > 0"
+            @click="handleClear"
+            class="group relative px-6 py-2 text-sm font-medium text-white transition-all duration-300 overflow-hidden rounded-full"
+          >
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span class="relative flex items-center gap-2">
+              Clear
+            </span>
+          </button>
+        </div>
       </div>
     </header>
 
