@@ -50,7 +50,7 @@ useHead({
     <div class="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float" style="animation-delay: 4s;"></div>
 
     <!-- Header -->
-    <header class="relative z-10 flex-shrink-0 glass-effect mx-4 mt-4 mb-4 px-6 py-4">
+    <header class="relative z-20 flex-shrink-0 glass-effect mx-4 mt-4 mb-4 px-6 py-4">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
