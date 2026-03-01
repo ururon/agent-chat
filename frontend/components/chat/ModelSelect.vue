@@ -68,7 +68,7 @@ import { ref, computed } from 'vue'
 import type { ModelInfo } from '~/types/chat'
 
 interface Props {
-  models: ModelInfo[]
+  models: readonly ModelInfo[]
   modelValue: string
 }
 
