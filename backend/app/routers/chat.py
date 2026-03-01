@@ -171,11 +171,20 @@ async def send_message(request: ChatMessageRequest) -> StreamingResponse:
 
     # 驗證模型（如果提供的話）
     model_to_use = request.model or settings.GEMINI_MODEL
-    if request.model and not validate_model(request.model):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"無效的模型: {request.model}。可用模型: {list(AVAILABLE_MODELS.keys())}"
-        )
+    if request.model:
+        # 使用動態驗證（來自 Google API 的模型列表）
+        if not await model_service.validate_model(request.model):
+            # 取得可用模型列表以顯示在錯誤訊息中
+            try:
+                available_models = await model_service.get_available_models()
+                model_ids = [m["id"] for m in available_models]
+            except Exception:
+                model_ids = [settings.GEMINI_MODEL]
+
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"無效的模型: {request.model}。可用模型: {model_ids}"
+            )
 
     return StreamingResponse(
         generate_sse_stream(request.message.strip(), model_to_use),

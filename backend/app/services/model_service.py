@@ -105,6 +105,23 @@ class ModelService:
         """
         return settings.GEMINI_MODEL
 
+    async def validate_model(self, model_id: str) -> bool:
+        """
+        驗證模型 ID 是否有效（使用動態取得的模型列表）
+
+        Args:
+            model_id: 要驗證的模型 ID
+
+        Returns:
+            bool: 模型 ID 是否有效
+        """
+        try:
+            models = await self.get_available_models()
+            return any(m["id"] == model_id for m in models)
+        except Exception:
+            # API 失敗時，無法驗證，返回 False
+            return False
+
 
 # 全域單例實例
 model_service = ModelService()
