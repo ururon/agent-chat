@@ -17,9 +17,7 @@ const {
 const {
   models,
   selectedModel,
-  setSelectedModel,
-  isLoadingModels,
-  currentModel
+  setSelectedModel
 } = useModelSelection()
 
 const handleSend = (message: string) => {
@@ -109,7 +107,7 @@ useHead({
         <button
           v-if="!isAtBottom && messages.length > 0"
           @click="handleScrollToBottom"
-          class="absolute bottom-24 right-6 z-40 group relative px-4 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 overflow-hidden shadow-lg hover:shadow-xl"
+          class="absolute bottom-24 right-6 z-40 group px-4 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 overflow-hidden shadow-lg hover:shadow-xl"
         >
           <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-indigo-600 group-hover:opacity-90 transition-opacity"></div>
           <span class="relative flex items-center gap-2">
