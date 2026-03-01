@@ -93,6 +93,9 @@ class OpenAIService:
             self._message_history.append(assistant_msg)
 
         except Exception as e:
+            # Debug logging：記錄原始錯誤以協助診斷
+            print(f"[OpenAI API Error] Type: {type(e).__name__}, Message: {str(e)}")
+
             # 檢查是否為額度用完錯誤
             if self._is_quota_exceeded_error(e):
                 # 額度用完：移除使用者訊息，返回友善訊息
@@ -113,15 +116,18 @@ class OpenAIService:
 
         Returns:
             bool: 是否為額度用完錯誤
+
+        注意：HTTP 403 代表權限不足或模型不存在，不應視為額度用完。
+        真正的額度錯誤會包含 quota/rate limit 關鍵字或返回 HTTP 429。
         """
         error_str = str(error).lower()
         # 檢查常見的額度用完關鍵字
+        # 注意：不包含 "403"，因為 403 通常代表權限或模型問題
         quota_keywords = [
             "quota",
             "rate limit",
             "rate_limit",
             "429",
-            "403",
             "resource_exhausted",
             "resourceexhausted",
             "out of quota"
