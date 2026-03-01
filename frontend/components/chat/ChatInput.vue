@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useModelSelection } from '~/composables/useModelSelection'
+import ModelSelect from './ModelSelect.vue'
 
 interface Props {
   disabled?: boolean
@@ -53,24 +55,16 @@ const isFocused = ref(false)
   <div class="relative z-10 px-4 py-4 pb-6">
     <!-- 模型選擇區塊 -->
     <div class="mb-4 flex items-center gap-2">
-      <label for="model-select" class="text-xs text-white/70 font-medium whitespace-nowrap">
+      <label class="text-xs text-white/70 font-medium whitespace-nowrap">
         Model:
       </label>
-      <select
-        id="model-select"
-        :value="selectedModel"
-        @change="e => setSelectedModel((e.target as HTMLSelectElement).value)"
-        :disabled="isLoadingModels || disabled"
-        class="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm
-               hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50
-               transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-               backdrop-blur-md"
-      >
-        <option v-if="models.length === 0 && isLoadingModels" value="">Loading...</option>
-        <option v-for="model in models" :key="model.id" :value="model.id">
-          {{ model.name }} - {{ model.category === 'advanced' ? 'Advanced' : model.category === 'recommended' ? 'Recommended' : 'Stable' }}
-        </option>
-      </select>
+      <div class="flex-1">
+        <ModelSelect
+          v-model="selectedModel"
+          :models="models"
+          @update:model-value="setSelectedModel"
+        />
+      </div>
     </div>
 
     <!-- 模型說明 -->
