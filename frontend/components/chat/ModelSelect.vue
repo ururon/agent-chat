@@ -21,7 +21,7 @@
     <!-- 下拉選單 -->
     <div
       v-if="isOpen"
-      class="absolute top-full right-0 mt-2 min-w-[240px] glass-effect rounded-lg shadow-xl z-50 border border-white/10"
+      class="absolute top-full right-0 mt-2 min-w-[240px] rounded-lg shadow-xl z-50 bg-slate-900/95 backdrop-blur-md border border-white/15"
     >
       <!-- 滾軸限制容器：最多 5 筆，超過則顯示滾軸 -->
       <div class="max-h-[240px] overflow-y-auto">
