@@ -3,7 +3,7 @@ Chat 相關的 Pydantic Schemas
 """
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, TypedDict
 from pydantic import BaseModel, Field
 
 
@@ -11,6 +11,15 @@ class MessageRole(str, Enum):
     """訊息角色"""
     USER = "user"
     ASSISTANT = "assistant"
+
+
+class ModelInfo(TypedDict):
+    """AI 模型資訊"""
+    id: str
+    name: str
+    category: str
+    description: str
+    context_window: int
 
 
 class ChatMessageRequest(BaseModel):
