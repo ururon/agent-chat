@@ -24,8 +24,7 @@ from app.services.openai_service import openai_service
 
 router = APIRouter(
     prefix="/api/chat",
-    tags=["chat"],
-    description="AI 對話 API - 使用 Google Gemini（通過 OpenAI SDK）"
+    tags=["chat"]
 )
 
 
