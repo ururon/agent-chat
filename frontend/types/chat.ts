@@ -31,6 +31,17 @@ export interface Model {
 }
 
 /**
+ * AI 模型詳細資訊（對應後端 ModelInfo）
+ */
+export interface ModelInfo {
+  id: string
+  name: string
+  category: string
+  description: string
+  context_window: number
+}
+
+/**
  * SSE 事件類型
  */
 export type SSEEventType = 'chunk' | 'done' | 'error'

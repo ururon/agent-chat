@@ -73,21 +73,20 @@ interface Props {
   modelValue: string
 }
 
-interface Emits {
+// 正確：只在 <script setup> 頂層呼叫一次
+const props = defineProps<Props>()
+defineEmits<{
   (e: 'update:modelValue', value: string): void
-}
-
-defineProps<Props>()
-defineEmits<Emits>()
+}>()
 
 const isOpen = ref(false)
 
-// 計算當前選擇的模型名稱
+// 使用 defineModel 進行雙向綁定
 const selectedModelId = defineModel<string>('modelValue')
 
+// 計算當前選擇的模型名稱
 const selectedModelName = computed(() => {
-  const models = defineProps<Props>().models
-  const selected = models.find(m => m.id === selectedModelId.value)
+  const selected = props.models.find(m => m.id === selectedModelId.value)
   return selected?.name || '選擇模型'
 })
 
