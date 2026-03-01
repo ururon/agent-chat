@@ -95,7 +95,7 @@ const isSelected = (modelId: string) => {
 }
 
 // 選擇模型
-const selectModel = (model: ModelInfo) => {
+const selectModel = (model: Model) => {
   selectedModelId.value = model.id
   isOpen.value = false
 }
