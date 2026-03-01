@@ -65,10 +65,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { ModelInfo } from '~/types/chat'
+import type { Model } from '~/types/chat'
 
 interface Props {
-  models: readonly ModelInfo[]
+  models: readonly Model[]
   modelValue: string
 }
 
