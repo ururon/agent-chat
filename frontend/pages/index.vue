@@ -21,7 +21,7 @@ const {
 } = useModelSelection()
 
 const handleSend = (message: string) => {
-  sendMessage(message)
+  sendMessage(message, selectedModel.value)
 }
 
 const handleClear = async () => {

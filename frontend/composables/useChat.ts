@@ -1,11 +1,8 @@
 import type { ChatMessage, SendMessageRequest } from '~/types/chat'
 import { useAutoScroll } from './useAutoScroll'
-import { useModelSelection } from './useModelSelection'
 import { readonly, ref, watch } from 'vue'
 
 export const useChat = () => {
-  // 模型選擇
-  const { selectedModel } = useModelSelection()
   // 狀態管理
   const messages = ref<ChatMessage[]>([])
   const isLoading = ref(false)
@@ -55,7 +52,7 @@ export const useChat = () => {
   /**
    * 發送訊息並接收 SSE streaming 回應
    */
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message: string, model: string) => {
     if (!message.trim()) return
 
     // 清除錯誤
@@ -93,7 +90,7 @@ export const useChat = () => {
         },
         body: JSON.stringify({
           message: message.trim(),
-          model: selectedModel.value
+          model: model
         } as SendMessageRequest),
       })
 
